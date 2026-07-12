@@ -25,92 +25,121 @@ This is the public documentation showcase for Veloquity. The source code is main
 
 | Document | What It Covers |
 |---|---|
-| This README | System overview, architecture summary, validation results, recognition |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Agent-by-agent design, AWS service roles, key architectural decisions, clustering evolution |
+| This README | System overview, pipeline architecture, validation results, recognition |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Agent-by-agent design, Mermaid diagrams, AWS service roles, key architectural decisions, clustering evolution |
 | [EVALUATION.md](EVALUATION.md) | Test suite, cost benchmarks, latency breakdown, domain-agnostic validation, real production failure modes |
 
-The full technical write-up is on the [AWS Builder Center](https://builder.aws.com/content/3AzrKpJbhJwEP6EZbm87vdxufgi/aideas-finalist-veloquity-the-agentic-evidence-intelligent-platform-turning-raw-feedback-into-evidence-driven-decisions) and the system is live at [veloquity1.vercel.app](https://veloquity1.vercel.app). Source code available on request.
+The full technical write-up is on the [AWS Builder Center](https://builder.aws.com/content/3AzrKpJbhJwEP6EZbm87vdxufgi/aideas-finalist-veloquity-the-agentic-evidence-intelligent-platform-turning-raw-feedback-into-evidence-driven-decisions). Source code available on request.
 
 ---
 
 ## The Problem
 
-Most product and operations teams don't fail because they lack data. They fail because raw feedback arrives as noise — thousands of disconnected reviews, tickets, and survey responses — and by the time a human has read enough of it to spot a real pattern, the signal has already decayed or been acted on by instinct instead of evidence. The gap was never data collection. It's the missing layer between raw information and a decision someone can actually stand behind.
+**Organizations today are not lacking feedback. They are lacking clarity.**
 
-Veloquity is that layer: a fully serverless, agentic pipeline that turns raw, unstructured feedback into prioritized, evidence-backed decisions — with every single recommendation traceable back to the original source item that produced it.
+Feedback arrives continuously across product teams, hospitals, and public systems — support tickets, app reviews, survey responses, and user complaints. Each signal seems small in isolation. Collectively, they form a pattern. But that pattern is hard to see.
+
+The same underlying issue may arrive described in completely different ways:
+- a crash report
+- a vague complaint  
+- a frustrated review
+- a detailed support ticket
+
+Most teams still rely on manual interpretation — reading feedback, scanning tickets, prioritizing based on intuition. At small scale, this works. At large scale, it fails. Organizations may process thousands of inputs yet still miss the single issue affecting the most users.
+
+**Veloquity was built to close that gap.**
 
 ---
 
 ## What Was Built
 
-Four purpose-built agents, each responsible for one clean transformation of the data, chained into a single pipeline:
+A fully serverless, agentic pipeline that transforms raw, unstructured feedback into prioritized, evidence-backed decisions — with every recommendation traceable back to the exact source item that produced it.
 
-```
-Raw Feedback (reviews, tickets, survey responses)
-        │
-        ▼
-┌───────────────────────┐
-│   Ingestion Agent      │   Cleans, protects, and deduplicates raw input
-└───────────────────────┘
-        │
-        ▼
-┌───────────────────────┐
-│ Evidence Intelligence  │   Groups related feedback into confidence-scored evidence
-└───────────────────────┘
-        │
-        ▼
-┌───────────────────────┐
-│   Reasoning Agent      │   Reasons over evidence into ranked, explainable actions
-└───────────────────────┘
-        │
-        ▼
-┌───────────────────────┐
-│   Governance Agent     │   Keeps the evidence base honest and current over time
-└───────────────────────┘
-        │
-        ▼
-  Evidence-Backed Decision
+```mermaid
+flowchart TD
+    SRC["📥 Feedback Sources\nApp Reviews · Support Tickets · Surveys · Portal Data"]
+
+    SRC --> ING
+
+    subgraph ING["① Ingestion Agent"]
+        I1["Normalize · Deduplicate · PII-redact · Source-tag"]
+    end
+
+    ING --> EVI
+
+    subgraph EVI["② Evidence Intelligence Agent"]
+        E1["Embed semantically — 1024 dimensions"]
+        E2["Cluster by meaning, not keywords"]
+        E3["Score confidence per cluster"]
+        E1 --> E2 --> E3
+    end
+
+    EVI --> STORE
+
+    STORE[("③ Evidence Store\nConfidence-scored clusters\nFull lineage preserved")]
+
+    STORE --> REA
+
+    subgraph REA["④ Reasoning Agent"]
+        R1["Rank evidence · Generate explainable recommendations"]
+    end
+
+    REA --> OUT["✅ Evidence-Backed Decisions\nEvery recommendation traceable to source"]
+
+    GOV["🛡️ Governance Agent\nRuns independently on a schedule\nStaleness detection · Audit log"]
+
+    GOV -.->|"Monitors"| STORE
+    GOV -.->|"Audits"| OUT
 ```
 
-| Stage | Responsibility | Core AWS Technology |
+| Stage | Job | Core AWS Technology |
 |---|---|---|
-| Ingestion | Normalize, protect, and deduplicate raw feedback | AWS Lambda, Amazon S3 |
-| Evidence Intelligence | Embed and cluster feedback into confidence-scored evidence | Amazon Titan Embed V2, Amazon RDS (pgvector, HNSW) |
-| Reasoning | Reason across evidence into ranked, source-linked recommendations | Amazon Bedrock (Nova Pro) |
-| Governance | Detect staleness, promote signals, maintain an audit trail | AWS Lambda, Amazon EventBridge |
-
-Every stage hands off a structured, well-defined output to the next — no stage guesses what it received, and no stage does more than one job.
+| Ingestion | Normalize, protect, and deduplicate raw feedback | AWS Lambda · Amazon S3 |
+| Evidence Intelligence | Embed and cluster feedback into confidence-scored evidence | Amazon Titan Embed V2 · RDS PostgreSQL (pgvector, HNSW) |
+| Reasoning | Reason over evidence into ranked, source-linked recommendations | Amazon Bedrock (Nova Pro) |
+| Governance | Detect staleness, promote signals, maintain audit trail | AWS Lambda · Amazon EventBridge |
 
 ---
 
 ## How It's Different
 
-**Traceability, not a black box.**
-Every recommendation Veloquity produces links back through its evidence to the exact original feedback items that generated it — source, timestamp, and context, not just a generated paragraph. If a recommendation can't be traced to real evidence, it isn't surfaced.
+### Traceability, not a black box
 
-**Confidence scoring, not keyword counting.**
-Evidence isn't ranked by how often a word appears. Related feedback is embedded and grouped semantically, then scored on how tightly that group actually agrees with itself — tight, coherent clusters route differently than loose, weakly-related ones, with the more expensive reasoning step reserved for evidence that has earned it.
+Every recommendation Veloquity produces links back through its evidence to the exact original feedback items — source, timestamp, and context, not just a generated paragraph. If a recommendation can't be traced to real evidence, it isn't surfaced.
 
-**Agentic reasoning, not static rules.**
-The final recommendation step isn't a fixed if/else rulebook. A reasoning agent retrieves the relevant evidence, weighs it against multiple real-world factors, and generates a structured, explainable recommendation — consistent and comparable across every run, but not hardcoded to any one domain.
+```
+Raw Feedback  →  Evidence Cluster  →  Confidence Score  →  Reasoning  →  Decision
+     ↑______________________________________________↑
+                    Full lineage preserved
+```
 
----
+### Confidence scoring, not keyword counting
 
-## Engineering Evolution
+Evidence isn't ranked by how often a word appears. Related feedback is embedded and grouped semantically, then scored on how tightly the group actually agrees with itself.
 
-The evidence-clustering approach wasn't the first thing that shipped. It started as a simpler, greedy similarity-based grouping method, and was later iterated toward density-based clustering in a dedicated experimentation branch to test whether cluster quality could improve further. That kind of iteration — ship the simple version, measure it, then deliberately explore an alternative — is the normal shape of how this system was actually built, not a one-shot design.
+```mermaid
+flowchart LR
+    A["50 people saying\n'crash' loosely"] -->|Low confidence\nLoose cluster| B["🚫 Rejected"]
+    C["5 engineers reporting\nthe same bug precisely"] -->|High confidence\nTight cluster| D["✅ Drives recommendation"]
+```
+
+Volume doesn't win. Coherence does.
+
+### Agentic reasoning, not static rules
+
+The recommendation step isn't a fixed rulebook. A reasoning agent retrieves the relevant evidence, weighs it against multiple factors — confidence, user count, cross-source corroboration, recency — and generates a structured, explainable recommendation. Consistent across every run. Not hardcoded to any domain.
 
 ---
 
 ## Validated On
 
-Veloquity's core claim is that the pipeline is domain-agnostic — the same code, unmodified, produces meaningful evidence and recommendations regardless of what kind of feedback it's given.
+Veloquity's core claim is domain-agnostic intelligence. The same code, unmodified, processes meaningful evidence and recommendations regardless of what kind of feedback it receives.
 
 | Domain | Volume | Result |
 |---|---|---|
 | SaaS product feedback (app reviews + support tickets) | 547 items | Coherent evidence clusters, ranked recommendations |
-| Healthcare patient experience (portal + survey data) | 310 items | Same pipeline, same confidence approach, zero code changes |
-| **Combined** | **857 items** | **One pipeline, two unrelated domains** |
+| Healthcare patient experience (portal + survey data) | 310 items | Same pipeline, zero code changes |
+| **Combined** | **857 items** | **One pipeline. Two unrelated domains.** |
 
 **Performance and cost, measured end-to-end:**
 
@@ -119,7 +148,7 @@ Veloquity's core claim is that the pipeline is domain-agnostic — the same code
 | Full pipeline runtime | ~91 seconds |
 | Cost per full run | $0.029 |
 | Automated test suite | 158 tests, 100% passing |
-| Test suite runtime | 0.72 seconds (fully mocked — no live AWS or DB calls) |
+| Test suite runtime | 0.72 seconds (fully mocked) |
 
 ---
 
@@ -128,13 +157,13 @@ Veloquity's core claim is that the pipeline is domain-agnostic — the same code
 | Service | Role in Veloquity |
 |---|---|
 | AWS Lambda | Hosts all four pipeline agents |
-| Amazon Bedrock — Nova Pro | Powers the reasoning and recommendation generation stage |
-| Amazon Bedrock — Titan Embed V2 | Generates embeddings for evidence clustering |
-| Amazon RDS (PostgreSQL + pgvector) | Vector similarity search (HNSW) and relational storage |
-| Amazon S3 | Raw feedback storage and reasoning run archival |
-| Amazon EventBridge | Triggers scheduled governance runs |
+| Amazon Bedrock — Nova Pro | Reasoning and recommendation generation |
+| Amazon Bedrock — Titan Embed V2 | 1024-dimensional semantic embeddings |
+| Amazon RDS (PostgreSQL + pgvector) | HNSW vector search and relational storage |
+| Amazon S3 | Feedback storage and reasoning run archival |
+| Amazon EventBridge | Scheduled governance triggers |
 | AWS IAM | Access control across all services |
-| AWS Secrets Manager | Credential and secret management |
+| AWS Secrets Manager | Credential management — nothing hardcoded |
 
 ---
 
@@ -142,7 +171,7 @@ Veloquity's core claim is that the pipeline is domain-agnostic — the same code
 
 <a name="recognition"></a>
 
-Veloquity won the **AWS 10,000 AIdeas Asia Pacific & Japan (APJC) Regional Championship 2026** — selected from 10,000+ teams across 115 countries.
+Veloquity won the **AWS 10,000 AIdeas Asia Pacific & Japan (APJC) Regional Championship 2026**, selected from 10,000+ teams across 115 countries.
 
 - 🏆 **AWS APJC Regional Champion** — $15,000 prize support · $1,500 AWS credits · AWS re:Invent Las Vegas invitation
 - 📋 Official winners list: [`assets/aws-apjc-winners-list.png`](assets/aws-apjc-winners-list.png)
