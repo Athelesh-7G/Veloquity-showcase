@@ -1,10 +1,13 @@
 <div align="center">
 
-![Veloquity Banner](https://capsule-render.vercel.app/api?type=waving&color=0:0f0c29,50:302b63,100:24243e&height=200&section=header&text=VELOQUITY&fontSize=70&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Agentic%20Evidence%20Intelligence%20—%20Raw%20Feedback%20to%20Evidence-Driven%20Decisions&descAlignY=55&descSize=18)
+![Veloquity Banner](https://capsule-render.vercel.app/api?type=waving&color=0:0f0c29,50:302b63,100:24243e&height=200&section=header&text=VELOQUITY&fontSize=70&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Agentic%20Evidence%20Intelligence%20%E2%80%94%20Raw%20Feedback%20to%20Evidence-Driven%20Decisions&descAlignY=55&descSize=18)
 
-[![AWS APJC Regional Champion](https://img.shields.io/badge/AWS%2010%2C000%20AIdeas-APJC%20Regional%20Champion-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](#recognition)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://veloquity1.vercel.app)
-[![AWS Builder Center](https://img.shields.io/badge/AWS%20Builder%20Center-Article-232F3E?style=for-the-badge&logo=amazonaws&logoColor=FF9900)](https://builder.aws.com/content/3AzrKpJbhJwEP6EZbm87vdxufgi/aideas-finalist-veloquity-the-agentic-evidence-intelligent-platform-turning-raw-feedback-into-evidence-driven-decisions)
+[![AWS APJC Regional Champion](https://img.shields.io/badge/AWS%2010%2C000%20AIdeas-APJC%20Regional%20Champion%20%F0%9F%8F%86-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](#recognition)
+[![Demo Video](https://img.shields.io/badge/Demo%20Video-Watch%20on%20YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/wEG5jTQxlJ4?si=l1tH72icmjTMdh_H)
+[![AWS Builder Center Article](https://img.shields.io/badge/Full%20Technical%20Write--up-AWS%20Builder%20Center-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](https://builder.aws.com/content/3AzrKpJbhJwEP6EZbm87vdxufgi/aideas-finalist-veloquity-the-agentic-evidence-intelligent-platform-turning-raw-feedback-into-evidence-driven-decisions)
+[![Live Platform](https://img.shields.io/badge/Live%20Platform-veloquity1.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://veloquity1.vercel.app)
+
+<br/>
 
 ![Tests](https://img.shields.io/badge/tests-158%20passing-brightgreen?style=flat-square)
 ![Cost](https://img.shields.io/badge/pipeline%20cost-%240.029%2Frun-blue?style=flat-square)
@@ -13,6 +16,20 @@
 ![Domains](https://img.shields.io/badge/validated%20on-2%20domains-9cf?style=flat-square)
 
 </div>
+
+---
+
+## About This Repository
+
+This is the public documentation showcase for Veloquity. The source code is maintained in a private repository — Veloquity is on an active commercialization roadmap and the implementation is proprietary. What's here is a complete and honest record of what was designed, how it was validated, and what it actually produced.
+
+| Document | What It Covers |
+|---|---|
+| This README | System overview, architecture summary, validation results, recognition |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Agent-by-agent design, AWS service roles, key architectural decisions, clustering evolution |
+| [EVALUATION.md](EVALUATION.md) | Test suite, cost benchmarks, latency breakdown, domain-agnostic validation, real production failure modes |
+
+The full technical write-up is on the [AWS Builder Center](https://builder.aws.com/content/3AzrKpJbhJwEP6EZbm87vdxufgi/aideas-finalist-veloquity-the-agentic-evidence-intelligent-platform-turning-raw-feedback-into-evidence-driven-decisions) and the system is live at [veloquity1.vercel.app](https://veloquity1.vercel.app). Source code available on request.
 
 ---
 
@@ -114,7 +131,7 @@ Veloquity's core claim is that the pipeline is domain-agnostic — the same code
 | Amazon Bedrock — Nova Pro | Powers the reasoning and recommendation generation stage |
 | Amazon Bedrock — Titan Embed V2 | Generates embeddings for evidence clustering |
 | Amazon RDS (PostgreSQL + pgvector) | Vector similarity search (HNSW) and relational storage |
-| Amazon S3 | Raw feedback storage |
+| Amazon S3 | Raw feedback storage and reasoning run archival |
 | Amazon EventBridge | Triggers scheduled governance runs |
 | AWS IAM | Access control across all services |
 | AWS Secrets Manager | Credential and secret management |
@@ -123,17 +140,19 @@ Veloquity's core claim is that the pipeline is domain-agnostic — the same code
 
 ## Recognition
 
-Veloquity won the **AWS 10,000 AIdeas APJC Regional Championship**, under the positioning of an evidence intelligence layer between organizational information and organizational decisions.
+<a name="recognition"></a>
 
-- 🏆 AWS APJC Regional Championship — official winners list: [`assets/aws-apjc-winners-list.png`](assets/aws-apjc-winners-list.png)
-- 📄 Full technical write-up — [AWS Builder Center article](https://builder.aws.com/content/3AzrKpJbhJwEP6EZbm87vdxufgi/aideas-finalist-veloquity-the-agentic-evidence-intelligent-platform-turning-raw-feedback-into-evidence-driven-decisions)
-- 🎥 [Demo video](https://youtu.be/wEG5jTQxlJ4?si=l1tH72icmjTMdh_H)
-- 🔗 Live demo: [veloquity1.vercel.app](https://veloquity1.vercel.app)
+Veloquity won the **AWS 10,000 AIdeas Asia Pacific & Japan (APJC) Regional Championship 2026** — selected from 10,000+ teams across 115 countries.
+
+- 🏆 **AWS APJC Regional Champion** — $15,000 prize support · $1,500 AWS credits · AWS re:Invent Las Vegas invitation
+- 📋 Official winners list: [`assets/aws-apjc-winners-list.png`](assets/aws-apjc-winners-list.png)
+- 📰 Full technical write-up: [AWS Builder Center Article](https://builder.aws.com/content/3AzrKpJbhJwEP6EZbm87vdxufgi/aideas-finalist-veloquity-the-agentic-evidence-intelligent-platform-turning-raw-feedback-into-evidence-driven-decisions)
+- 🎥 Demo video: [Watch on YouTube](https://youtu.be/wEG5jTQxlJ4?si=l1tH72icmjTMdh_H)
+- 🌐 Live platform: [veloquity1.vercel.app](https://veloquity1.vercel.app)
+- 📰 Featured in **Business Today** alongside **Jeff Barr** *(VP & Chief Evangelist, AWS)*
 
 ---
 
 <div align="center">
-
-**Source code is private — architecture and results documented above. Full code available on request.**
-
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:24243e,50:302b63,100:0f0c29&height=100&section=footer" width="100%"/>
 </div>
