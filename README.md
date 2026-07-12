@@ -21,7 +21,7 @@
 
 ## About This Repository
 
-This is the public documentation showcase for Veloquity. The source code is maintained in a private repository — Veloquity is on an active commercialization roadmap and the implementation is proprietary. What's here is a complete and honest record of what was designed, how it was validated, and what it actually produced.
+This is the public documentation showcase for Veloquity. The source code is maintained in a private repository. What's here is a complete record of what was designed, how it was validated, and what it actually produced.
 
 | Document | What It Covers |
 |---|---|
